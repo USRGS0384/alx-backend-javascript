@@ -7,8 +7,6 @@ function getFullResponseFromAPI(success) {
  
       reject(new Error('The fake API is not working currently'));
     }
-  });
+  })
 }
 
-console.log(etFullResponseFromAPI(true));
-console.log(gteFullReonseFromAPI(false));
