@@ -1,3 +1,4 @@
+// full_server/controllers/StudentsController.js
 import { readDatabase } from '../utils.js';
 
 export default class StudentsController {
@@ -7,9 +8,11 @@ export default class StudentsController {
     try {
       const students = await readDatabase(filePath);
 
+      // Prepare and send the response
       res.status(200).send(
         `This is the list of our students\n` +
-        Object.keys(students).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'accent' }))
+        Object.keys(students)
+          .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'accent' }))
           .map(field => {
             return `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}`;
           }).join('\n')
@@ -19,22 +22,27 @@ export default class StudentsController {
     }
   }
 
-  // StudentsController.js
+  static async getAllStudentsByMajor(req, res) {
+    const filePath = process.argv[2] || './database.csv'; // Default to './database.csv'
 
-static async getAllStudents(req, res) {
-  const filePath = process.argv[2] || './database.csv'; // Default to './database.csv'
+    const { major } = req.params;
 
-  try {
-    const students = await readDatabase(filePath);
+    // Validate the major parameter
+    if (major !== 'CS' && major !== 'SWE') {
+      return res.status(500).send('Major parameter must be CS or SWE');
+    }
 
-    res.status(200).send(
-      `This is the list of our students\n` +
-      Object.keys(students).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'accent' }))
-        .map(field => {
-          return `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}`;
-        }).join('\n')
-    );
-  } catch (error) {
-    res.status(500).send('Cannot load the database');
+    try {
+      const students = await readDatabase(filePath);
+
+      if (!students[major]) {
+        return res.status(500).send('Cannot load the database');
+      }
+
+      // Send the list of students for the specified major
+      res.status(200).send(`List: ${students[major].join(', ')}`);
+    } catch (error) {
+      res.status(500).send('Cannot load the database');
+    }
   }
 }
