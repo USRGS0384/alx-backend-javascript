@@ -1,31 +1,40 @@
-// full_server/utils.js
 import fs from 'fs';
 import path from 'path';
 
-export const readDatabase = (filePath) => {
+// Function to read the database CSV file asynchronously
+export function readDatabase(filePath) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path.resolve(filePath), 'utf8', (err, data) => {
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return reject(new Error('Cannot load the database'));
+    }
+
+    // Read the file asynchronously
+    fs.readFile(filePath, 'utf-8', (err, data) => {
       if (err) {
-        reject('Cannot load the database');
-        return;
+        return reject(new Error('Cannot load the database'));
       }
 
       try {
-        const students = JSON.parse(data);
-        const result = {};
+        // Process the file contents (assuming CSV format: firstname,field)
+        const students = {};
 
-        students.forEach((student) => {
-          if (!result[student.field]) {
-            result[student.field] = [];
+        // Split the content by lines
+        const lines = data.split('\n');
+        lines.forEach((line) => {
+          const [firstname, field] = line.split(',');
+
+          if (firstname && field) {
+            if (!students[field]) students[field] = [];
+            students[field].push(firstname);
           }
-          result[student.field].push(student.firstname);
         });
 
-        resolve(result);
-      } catch (parseError) {
-        reject('Cannot load the database');
+        resolve(students);
+      } catch (error) {
+        reject(new Error('Cannot load the database'));
       }
     });
   });
-};
+}
 
