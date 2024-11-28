@@ -1,36 +1,23 @@
-const expect = require("chai").expect;
-const {describe, it} = require("mocha");
-const calculateNumber = require("./2-calcul_chai");
+const { expect } = require('chai');
+const calculateNumber = require('./0-calcul'); // Adjust path to your actual file
 
-describe("calculateNumber", function() {
-    describe("SUM", function() {
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("SUM", 1, 2)).to.equal(3);
-	});
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("SUM", 1.6, 2.6)).to.equal(5);
-	});
-    });
-    describe("SUBTRACT", function() {
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("SUBTRACT", 1.4, 2.3)).to.equal(-1);
-	});
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("SUBTRACT", 4.9, 2.7)).to.equal(2);
-	});
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("SUBTRACT", -4.9, -2.7)).to.equal(-2);
-	});
-    });
-    describe("DIVIDE", function() {
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("DIVIDE", 4, 2)).to.equal(2);
-	});
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("DIVIDE", 4.6, 1.8)).to.equal(2.5);
-	});
-	it("checking if numbers round", function() {
-	    expect(calculateNumber("DIVIDE", 4, 0)).to.equal("Error");
-	});
-    });
+describe('calculateNumber with chai', () => {
+  it('should return the sum of two rounded integers', () => {
+    expect(calculateNumber(1, 3)).to.equal(4);
+    expect(calculateNumber(1.2, 3.7)).to.equal(5);
+    expect(calculateNumber(1.5, 3.7)).to.equal(6);
+    expect(calculateNumber(2.4, 2.4)).to.equal(4);
+  });
+
+  it('should handle negative numbers', () => {
+    expect(calculateNumber(-1.4, -3.6)).to.equal(-5);
+    expect(calculateNumber(-1.5, 2.5)).to.equal(1);
+    expect(calculateNumber(-0.5, -0.5)).to.equal(-1);
+  });
+
+  it('should handle edge cases', () => {
+    expect(calculateNumber(0.1, 0.7)).to.equal(1);
+    expect(calculateNumber(0.4, 0.4)).to.equal(0);
+    expect(calculateNumber(0.9, 0.1)).to.equal(1);
+  });
 });
