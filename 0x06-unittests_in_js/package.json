@@ -8,7 +8,7 @@
     "mocha": "^10.8.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha 0-calcul.test.js"
   },
   "keywords": [],
   "author": "",
