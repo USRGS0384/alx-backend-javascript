@@ -1,36 +1,43 @@
-const request = require('request');
-const { expect } = require('chai');
+const request = require("request");
+const {describe, it} = require("mocha");
+const expect = require("chai").expect;
 
-describe('API integration test', () => {
-  const API_URL = 'http://localhost:7865';
-
-  it('GET / returns correct response', (done) => {
-    request.get(`${API_URL}/`, (_err, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal('Welcome to the payment system');
-      done();
+describe("Index page", function() {
+    const options = {
+	url: "http://localhost:7865/",
+	method: "GET"
+    }
+    it("check correct status code", function(done) {
+	request(options, function(err, res, body) {
+	    expect(res.statusCode).to.equal(200);
+	    done();
+	});
     });
-  });
-
-  it('GET /cart/:id returns correct response for valid :id', (done) => {
-    request.get(`${API_URL}/cart/47`, (_err, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal('Payment methods for cart 47');
-      done();
+    it("check correct content", function(done) {
+	request(options, function(err, res, body) {
+	    expect(body).to.equal("Welcome to the payment system");
+	    done();
+	});
     });
-  });
+});
 
-  it('GET /cart/:id returns 404 response for negative number values in :id', (done) => {
-    request.get(`${API_URL}/cart/-47`, (_err, res, _body) => {
-      expect(res.statusCode).to.be.equal(404);
-      done();
+describe("Cart page", function() {
+    it("check correct status code for correct url", function(done) {
+	request.get("http://localhost:7865/cart/12", function(err, res, body) {
+	    expect(res.statusCode).to.equal(200);
+	    done();
+	});
     });
-  });
-
-  it('GET /cart/:id returns 404 response for non-numeric values in :id', (done) => {
-    request.get(`${API_URL}/cart/d200-44a5-9de6`, (_err, res, _body) => {
-      expect(res.statusCode).to.be.equal(404);
-      done();
+    it("check correct content for correct url", function(done) {
+	request.get("http://localhost:7865/cart/12", function(err, res, body) {
+	    expect(body).to.contain("Payment methods for cart 12");
+	    done();
+	});
     });
-  });
+    it("check correct status code for incorrect url", function(done) {
+	request.get("http://localhost:7865/cart/kim", function(err, res, body) {
+	    expect(res.statusCode).to.equal(404);
+	    done();
+	});
+    });
 });
