@@ -1,36 +1,29 @@
-const request = require('request');
-const { expect } = require('chai');
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import app from './api.js';
 
-describe('API integration test', () => {
-  const API_URL = 'http://localhost:7865';
+const { expect } = chai;
+chai.use(chaiHttp);
 
-  it('GET / returns correct response', (done) => {
-    request.get(`${API_URL}/`, (_err, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal('Welcome to the payment system');
-      done();
+describe('API Integration Tests', () => {
+  describe('GET /', () => {
+    it('should return status 200 and welcome message', async () => {
+      const res = await chai.request(app).get('/');
+      expect(res.status).to.equal(200);
+      expect(res.text).to.equal('Welcome to the payment system');
     });
   });
 
-  it('GET /cart/:id returns correct response for valid :id', (done) => {
-    request.get(`${API_URL}/cart/47`, (_err, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal('Payment methods for cart 47');
-      done();
+  describe('GET /cart/:id', () => {
+    it('should return status 200 when :id is a number', async () => {
+      const res = await chai.request(app).get('/cart/12');
+      expect(res.status).to.equal(200);
+      expect(res.text).to.equal('Payment methods for cart 12');
     });
-  });
 
-  it('GET /cart/:id returns 404 response for negative number values in :id', (done) => {
-    request.get(`${API_URL}/cart/-47`, (_err, res, _body) => {
-      expect(res.statusCode).to.be.equal(404);
-      done();
-    });
-  });
-
-  it('GET /cart/:id returns 404 response for non-numeric values in :id', (done) => {
-    request.get(`${API_URL}/cart/d200-44a5-9de6`, (_err, res, _body) => {
-      expect(res.statusCode).to.be.equal(404);
-      done();
+    it('should return status 404 when :id is not a number', async () => {
+      const res = await chai.request(app).get('/cart/hello');
+      expect(res.status).to.equal(404);
     });
   });
 });

@@ -12,6 +12,8 @@
     "mocha": "^10.8.2",
     "supertest": "^7.0.0"
   },
+  
+  {
   "scripts": {
     "test": "mocha"
   },
@@ -19,4 +21,8 @@
   "author": "",
   "license": "ISC",
   "description": ""
+}
+
+{
+  "type": "module"
 }
