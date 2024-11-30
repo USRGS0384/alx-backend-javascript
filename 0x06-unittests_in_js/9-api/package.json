@@ -9,7 +9,7 @@
     "test": "node ./node_modules/mocha/bin/mocha"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -22,4 +22,3 @@
     "npm": "8.x",
     "yarn": "1.x"
   }
-}
