@@ -1,29 +1,43 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from './api.js';
+const request = require("request");
+const {describe, it} = require("mocha");
+const expect = require("chai").expect;
 
-const { expect } = chai;
-chai.use(chaiHttp);
-
-describe('API Integration Tests', () => {
-  describe('GET /', () => {
-    it('should return status 200 and welcome message', async () => {
-      const res = await chai.request(app).get('/');
-      expect(res.status).to.equal(200);
-      expect(res.text).to.equal('Welcome to the payment system');
+describe("Index page", function() {
+    const options = {
+	url: "http://localhost:7865/",
+	method: "GET"
+    }
+    it("check correct status code", function(done) {
+	request(options, function(err, res, body) {
+	    expect(res.statusCode).to.equal(200);
+	    done();
+	});
     });
-  });
-
-  describe('GET /cart/:id', () => {
-    it('should return status 200 when :id is a number', async () => {
-      const res = await chai.request(app).get('/cart/12');
-      expect(res.status).to.equal(200);
-      expect(res.text).to.equal('Payment methods for cart 12');
+    it("check correct content", function(done) {
+	request(options, function(err, res, body) {
+	    expect(body).to.equal("Welcome to the payment system");
+	    done();
+	});
     });
+});
 
-    it('should return status 404 when :id is not a number', async () => {
-      const res = await chai.request(app).get('/cart/hello');
-      expect(res.status).to.equal(404);
+describe("Cart page", function() {
+    it("check correct status code for correct url", function(done) {
+	request.get("http://localhost:7865/cart/12", function(err, res, body) {
+	    expect(res.statusCode).to.equal(200);
+	    done();
+	});
     });
-  });
+    it("check correct content for correct url", function(done) {
+	request.get("http://localhost:7865/cart/12", function(err, res, body) {
+	    expect(body).to.contain("Payment methods for cart 12");
+	    done();
+	});
+    });
+    it("check correct status code for incorrect url", function(done) {
+	request.get("http://localhost:7865/cart/kim", function(err, res, body) {
+	    expect(res.statusCode).to.equal(404);
+	    done();
+	});
+    });
 });
